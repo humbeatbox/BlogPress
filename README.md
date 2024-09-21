@@ -5,8 +5,16 @@ Student Number: 120049234
 Student Email: hchang67@myseneca.ca
 Date Created: Sep 13 2024
 
-GITHUB URL:  
-VERCEL URL:
+GITHUB URL: https://github.com/humbeatbox/Web322_Assignments
+
+VERCEL URL :
+https://web322-assignments-nine.vercel.app/
+
+--branch version :
+https://web322-assignments-git-main-garys-projects-cd75ff6a.vercel.app/
+
+--preview version :
+[web322-assignments-ifb8klk41-garys-projects-cd75ff6a.vercel.app](https://web322-assignments-ifb8klk41-garys-projects-cd75ff6a.vercel.app/)
 
 ### Technology Stack
 
