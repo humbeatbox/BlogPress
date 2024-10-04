@@ -14,5 +14,21 @@
     "author": "Jane Smith",
     "published": false,
     "category": "Technology"
+  },
+  {
+    "id": 3,
+    "title": "The Rise of the Machines",
+    "content": "The machines are taking over...",
+    "author": "Gary Chang",
+    "published": true,
+    "category": "Technology"
+  },
+  {
+    "id": 4,
+    "title": "The Art of Cooking",
+    "content": "Cooking is an art form...",
+    "author": "Asthon Brown",
+    "published": true,
+    "category": "Food"
   }
 ]
