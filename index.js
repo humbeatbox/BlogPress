@@ -1,24 +1,24 @@
 const express = require("express"); // "require" the Express module
 const app = express(); // obtain the "app" object
-const HTTP_PORT = process.env.PORT || 8080; // assign a port
-const HOST = "127.0.0.1"; // assign a host
+const HTTP_PORT = 9527; // assign a port
 const path = require("path");
+
+app.use(express.static("public")); //static files for "/css/main.css
+
 // start the server on the port and output a confirmation to the console
-app.listen(HTTP_PORT, HOST, () =>
-  console.log(`server listening on: ${HTTP_PORT}`)
+app.listen(HTTP_PORT, () =>
+  console.log(`Express http server listening on ${HTTP_PORT}`)
 );
 
-app.get("/", (req, res, next) => {
-  console.log("First middleware");
-  next();
-});
+//redirect to the about page
 app.get("/", (req, res) => {
-  console.log("GET request detected");
-  //res.send("Hsiao-Kang Chang - 120049234");
-  res.sendFile(path.join(__dirname, "/views/index.html"));
+  res.redirect("/about");
 });
 
-app.post("/submit", (req, res) => {
-  console.log("POST request detected");
-  res.send("Form submitted");
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(__dirname, "/views/about.html"));
 });
+// app.post("/submit", (req, res) => {
+//   console.log("POST request detected");
+//   res.send("Form submitted");
+// });
