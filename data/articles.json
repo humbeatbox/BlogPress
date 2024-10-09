@@ -30,5 +30,45 @@
     "author": "Asthon Brown",
     "published": true,
     "category": "Food"
+  },
+  {
+    "id": 5,
+    "title": "The Joy of Baking",
+    "content": "Baking is a fun and rewarding hobby...",
+    "author": "Sara Lee",
+    "published": true,
+    "category": "Food"
+  },
+  {
+    "id": 6,
+    "title": "The Power of Python",
+    "content": "Python is a powerful programming language...",
+    "author": "John Doe",
+    "published": true,
+    "category": "Programming"
+  },
+  {
+    "id": 7,
+    "title": "The Beauty of Nature",
+    "content": "Nature is a source of inspiration...",
+    "author": "Jane Smith",
+    "published": true,
+    "category": "Nature"
+  },
+  {
+    "id": 8,
+    "title": "Exploring the Outdoors",
+    "content": "Outdoor activities are good for the soul...",
+    "author": "Math Hiker",
+    "published": true,
+    "category": "Nature"
+  },
+  {
+    "id": 9,
+    "title": "The World of Web Development",
+    "content": "Web development is an exciting field...",
+    "author": "Gary Chang",
+    "published": true,
+    "category": "Technology"
   }
 ]

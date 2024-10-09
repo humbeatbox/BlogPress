@@ -9,7 +9,7 @@ app.use(express.static("public")); //static files for "/css/main.css
 app.listen(HTTP_PORT, () =>
   console.log(`Express http server listening on ${HTTP_PORT}`)
 );
-
+//Create routes for / (Home), /about, /articles, and /categories.
 //redirect to the about page
 app.get("/", (req, res) => {
   res.redirect("/about");
@@ -18,7 +18,18 @@ app.get("/", (req, res) => {
 app.get("/about", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/about.html"));
 });
-// app.post("/submit", (req, res) => {
-//   console.log("POST request detected");
-//   res.send("Form submitted");
-// });
+
+app.get("/articles", (req, res) => {
+  contentService
+    .getPublishedArticles()
+    .then((data) => {
+      res.json(data);
+    })
+    .catch((err) => {
+      res.json({ message: err });
+    });
+});
+
+app.get("/categories", (req, res) => {
+  res.sendFile(path.join(__dirname, "/views/test.html"));
+});
