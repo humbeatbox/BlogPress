@@ -1,5 +1,6 @@
 // const fs = require("fs"); // required at the top of your module
 const fs = require("fs").promises;
+const path = require("path");
 
 class ContentService {
   // let articles = [];
@@ -10,20 +11,24 @@ class ContentService {
   }
 
   initialize() {
-    return fs
-      .readFile("./data/articles.json", "utf8")
-      .then((data) => {
-        this.articles = JSON.parse(data);
-        // console.log(this.articles);
-        return fs.readFile("./data/categories.json", "utf8");
-      })
-      .then((data) => {
-        this.categories = JSON.parse(data);
-        // console.log(this.categories);
-      })
-      .catch((err) => {
-        return Promise.reject("unable to read files: " + err);
-      });
+    //use path.join to create a path to the articles.json file
+    const articlesPath = path.join(__dirname, "data", "articles.json");
+    const categoriesPath = path.join(__dirname, "data", "categories.json");
+    return (
+      fs
+        // .readFile("./data/articles.json", "utf8")
+        .readFile(articlesPath, "utf8")
+        .then((data) => {
+          this.articles = JSON.parse(data);
+          return fs.readFile(categoriesPath, "utf8");
+        })
+        .then((data) => {
+          this.categories = JSON.parse(data);
+        })
+        .catch((err) => {
+          return Promise.reject("unable to read files: " + err);
+        })
+    );
   }
   getPublishedArticles() {
     return new Promise((resolve, reject) => {
