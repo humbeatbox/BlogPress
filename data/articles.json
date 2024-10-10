@@ -70,5 +70,13 @@
     "author": "Gary Chang",
     "published": true,
     "category": "Technology"
+  },
+  {
+    "id": 10,
+    "title": "The Art of Photography",
+    "content": "Photography is a creative and rewarding hobby...",
+    "author": "Asthon Brown",
+    "published": true,
+    "category": "Art"
   }
 ]

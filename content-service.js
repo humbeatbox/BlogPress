@@ -1,61 +1,65 @@
-const fs = require("fs"); // required at the top of your module
+// const fs = require("fs"); // required at the top of your module
+const fs = require("fs").promises;
 
-//global variables
-let articles = [];
-let categories = [];
-module.exports.initialize = function () {
-  return new Promise((resolve, reject) => {
-    //first read articles.json
-    fs.readFile("./data/articles.json", "utf8")
+class ContentService {
+  // let articles = [];
+  // let categories = [];
+  constructor() {
+    this.articles = [];
+    this.categories = [];
+  }
+
+  initialize() {
+    return fs
+      .readFile("./data/articles.json", "utf8")
       .then((data) => {
-        articles = JSON.parse(data);
+        this.articles = JSON.parse(data);
+        // console.log(this.articles);
         return fs.readFile("./data/categories.json", "utf8");
       })
       .then((data) => {
-        categories = JSON.parse(data);
-
-        resolve();
+        this.categories = JSON.parse(data);
+        // console.log(this.categories);
       })
       .catch((err) => {
-        reject("unable to read file");
+        return Promise.reject("unable to read files: " + err);
       });
-  });
-};
+  }
+  getPublishedArticles() {
+    return new Promise((resolve, reject) => {
+      const publishedArticles = this.articles.filter(
+        (article) => article.published === true
+      );
+      if (publishedArticles.length > 0) {
+        resolve(publishedArticles);
+      } else {
+        reject("no results returned");
+      }
+    });
+  }
+  //get all articles
+  getAllArticles() {
+    return new Promise((resolve, reject) => {
+      if (this.articles.length > 0) {
+        // console.log(this.articles);
+        // console.log("articles");
+        resolve(this.articles);
+      } else {
+        reject("no results returned");
+      }
+    });
+  }
 
-module.exports.getPublishedArticles = function () {
-  return new Promise((resolve, reject) => {
-    //filter the articles array to return only the published articles
-    const publishedArticles = articles.filter(
-      (article) => article.published === true
-    );
-    //if there are published articles, resolve the promise with the array
-    if (publishedArticles.length > 0) {
-      resolve(publishedArticles);
-    } else {
-      //if no published articles, reject the promise
-      reject("no results returned");
-    }
-  });
-};
+  //get all categories
+  getCategories() {
+    return new Promise((resolve, reject) => {
+      if (this.categories.length > 0) {
+        resolve(this.categories);
+      } else {
+        reject("no results returned");
+      }
+    });
+  }
+}
 
-//get all articles
-module.exports.getAllArticles = function () {
-  return Promise((resolve, reject) => {
-    if (articles.length > 0) {
-      resolve(articles);
-    } else {
-      reject("no results returned");
-    }
-  });
-};
-
-//get all categories
-module.exports.getCategories = function () {
-  return new Promise((resolve, reject) => {
-    if (categories.length > 0) {
-      resolve(categories);
-    } else {
-      reject("no results returned");
-    }
-  });
-};
+module.exports = ContentService;
