@@ -3,32 +3,28 @@ const fs = require("fs").promises;
 const path = require("path");
 
 class ContentService {
-  // let articles = [];
-  // let categories = [];
   constructor() {
     this.articles = [];
     this.categories = [];
   }
-
   initialize() {
-    //use path.join to create a path to the articles.json file
     const articlesPath = path.join(__dirname, "data", "articles.json");
     const categoriesPath = path.join(__dirname, "data", "categories.json");
-    return (
-      fs
-        // .readFile("./data/articles.json", "utf8")
-        .readFile(articlesPath, "utf8")
+
+    return new Promise((resolve, reject) => {
+      fs.readFile(articlesPath, "utf8")
         .then((data) => {
           this.articles = JSON.parse(data);
           return fs.readFile(categoriesPath, "utf8");
         })
         .then((data) => {
           this.categories = JSON.parse(data);
+          resolve();
         })
         .catch((err) => {
-          return Promise.reject("unable to read files: " + err);
-        })
-    );
+          reject("Unable to read files: " + err);
+        });
+    });
   }
   getPublishedArticles() {
     return new Promise((resolve, reject) => {

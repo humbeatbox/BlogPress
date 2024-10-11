@@ -6,36 +6,21 @@ const ContentService = require("./content-service");
 const contentService = new ContentService();
 app.use(express.static("public")); //static files for "/css/main.css
 
-const initializeMid = (req, res, next) => {
-  contentService
-    .initialize()
-    .then(() => {
-      console.log("Content service initialized");
-      next();
-    })
-    .catch((err) => {
-      console.log("Error initializing content service:", err);
-      res.status(500).send("Failed to initialize content service");
+async function startServer() {
+  try {
+    await contentService.initialize();
+    console.log("Content service initialized");
+
+    app.listen(HTTP_PORT, () => {
+      console.log(`Express http server listening on ${HTTP_PORT}`);
     });
-};
+  } catch (err) {
+    console.error("Error initializing content service:", err);
+    process.exit(1);
+  }
+}
 
-app.use(initializeMid);
-// start the server on the port and output a confirmation to the console
-app.listen(HTTP_PORT, () =>
-  console.log(`Express http server listening on ${HTTP_PORT}`)
-);
-
-// contentService
-//   .initialize()
-//   .then(() => {
-//     app.listen(HTTP_PORT, () =>
-//       console.log(`Express http server listening on ${HTTP_PORT}`)
-//     );
-//   })
-//   .catch((err) => {
-//     console.log("Error initializing content service:", err);
-//   });
-
+startServer();
 //Create routes for / (Home), /about, /articles, and /categories.
 //redirect to the about page
 app.get("/", (req, res) => {
