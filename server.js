@@ -47,7 +47,7 @@ app.get("/about", (req, res) => {
 });
 
 app.get("/articles", (req, res) => {
-  console.log("!server!articles!");
+  // console.log("!server!articles!");
   contentService
     .getAllArticles()
     .then((data) => {
@@ -59,7 +59,7 @@ app.get("/articles", (req, res) => {
 });
 
 app.get("/categories", (req, res) => {
-  console.log("!server!category!");
+  // console.log("!server!category!");
   contentService
     .getCategories()
     .then((data) => {
@@ -108,11 +108,14 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
   } else {
     //no file uploaded the ""
     processArticle("");
+    console.log("no uploaded file");
   }
   //for process the article with the image url
   function processArticle(imageUrl) {
     req.body.featureImage = imageUrl;
-
+    console.log("req.body and in processArticle");
+    console.log(req.body);
+    //call the addArticle function from contentService to handle the article
     contentService
       .addArticle(req.body)
       .then(() => res.redirect("/articles"))

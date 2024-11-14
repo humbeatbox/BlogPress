@@ -65,12 +65,22 @@ class ContentService {
   //part3 step1
   addArticle(article) {
     return new Promise((resolve, reject) => {
-      //transfer the published to boolean
-      articleData.published = articleData.published ? true : false;
-      //setup the articleID
-      articleData.id = this.articles.length + 1;
-      this.articles.push(articleData);
-      resolve(article);
+      try {
+        const newArticle = {
+          id: this.articles.length + 1,
+          title: article.title,
+          content: article.content,
+          author: article.author,
+          category: article.category,
+          featureImage: article.featureImage || "",
+          published: article.published ? true : false,
+        };
+        this.articles.push(newArticle);
+        resolve(newArticle);
+      } catch (error) {
+        console.error("Error in addArticle:", error);
+        reject(error);
+      }
     });
   }
 }
