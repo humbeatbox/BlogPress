@@ -54,3 +54,8 @@ app.get("/categories", (req, res) => {
       res.json({ message: err }); // Send the error message if something went wrong
     });
 });
+
+//part 1, step 2
+app.get("/articles/add", (req, res) => {
+  res.sendFile(path.join(__dirname, "views", "addArticle.html"));
+});
