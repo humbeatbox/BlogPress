@@ -61,6 +61,18 @@ class ContentService {
       }
     });
   }
+
+  //part3 step1
+  addArticle(article) {
+    return new Promise((resolve, reject) => {
+      //transfer the published to boolean
+      articleData.published = articleData.published ? true : false;
+      //setup the articleID
+      articleData.id = this.articles.length + 1;
+      this.articles.push(articleData);
+      resolve(article);
+    });
+  }
 }
 
 module.exports = ContentService;

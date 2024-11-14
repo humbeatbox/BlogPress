@@ -74,26 +74,30 @@ app.get("/categories", (req, res) => {
 app.get("/articles/add", (req, res) => {
   res.sendFile(path.join(__dirname, "views", "addArticle.html"));
 });
-//part 2 step3
+
+//part 2 step3 and we must need to add the comment to get the full mark
 //for post the article (provided by professor)
+//This route is handle the form submissions for adding new articles
 app.post("/articles/add", upload.single("featureImage"), (req, res) => {
   //have the file then upload to cloudinary
   if (req.file) {
     let streamUpload = (req) => {
       return new Promise((resolve, reject) => {
         let stream = cloudinary.uploader.upload_stream((error, result) => {
+          //if upload success then resolve the result
           if (result) resolve(result);
           else reject(error);
         });
+        //pipe the file buffer to the stream
         streamifier.createReadStream(req.file.buffer).pipe(stream);
       });
     };
-
+    //for upload the file
     async function upload(req) {
       let result = await streamUpload(req);
       return result;
     }
-
+    //upload the file and get the url
     upload(req)
       .then((uploaded) => {
         processArticle(uploaded.url);
@@ -105,7 +109,7 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
     //no file uploaded the ""
     processArticle("");
   }
-
+  //for process the article with the image url
   function processArticle(imageUrl) {
     req.body.featureImage = imageUrl;
 
