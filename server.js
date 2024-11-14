@@ -124,3 +124,44 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
       );
   }
 });
+
+//AS3 part4 step1
+app.get("/articles", (req, res) => {
+  //check if the query string contains the category parameter
+  //it will like "/articles?category=value"
+  if (req.query.category) {
+    contentService
+      .getArticlesByCategory(req.query.category)
+      .then((articles) => res.json(articles))
+      .catch((err) => res.status(404).json({ message: err }));
+  }
+  //check if the query string contains the minDate parameter
+  //it will like "/articles?minDate=value"
+  else if (req.query.minDate) {
+    contentService
+      .getArticlesByMinDate(req.query.minDate)
+      .then((articles) => res.json(articles))
+      .catch((err) => res.status(404).json({ message: err }));
+  }
+  //if no query string then return all articles
+  //it will like "/articles"
+  else {
+    contentService
+      .getAllArticles()
+      .then((articles) => res.json(articles))
+      .catch((err) => res.status(404).json({ message: err }));
+  }
+});
+//End of AS3 part4 step1
+
+//AS3 part4 step2
+//for get the article by id
+//it will like "/articles/:id"
+app.get("/articles/:id", (req, res) => {
+  contentService
+    .getArticleById(parseInt(req.params.id)) //neet to parse the id to integer
+    .then((article) => res.json(article))
+    .catch((err) => res.status(404).json({ message: err }));
+});
+
+//End of AS3 part4 step2
