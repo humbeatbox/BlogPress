@@ -74,6 +74,9 @@ class ContentService {
           category: article.category,
           featureImage: article.featureImage || "",
           published: article.published ? true : false,
+          articleDate:
+            article.articleDate || new Date().toISOString().split("T")[0],
+          //get the date and use the T to split the date and time and get the date only
         };
         this.articles.push(newArticle);
         resolve(newArticle);
