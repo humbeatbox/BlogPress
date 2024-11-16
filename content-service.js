@@ -99,6 +99,7 @@ class ContentService {
       }
     });
   };
+
   getArticlesByMinDate = (minDateStr) => {
     return new Promise((resolve, reject) => {
       const minDate = new Date(minDateStr);

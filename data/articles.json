@@ -5,7 +5,8 @@
     "content": "JavaScript is a versatile programming language...",
     "author": "John Doe",
     "published": true,
-    "category": "Programming"
+    "category": "Programming",
+    "articleDate": "2024-02-15"
   },
   {
     "id": 2,
@@ -13,7 +14,8 @@
     "content": "Artificial Intelligence is rapidly evolving...",
     "author": "Jane Smith",
     "published": false,
-    "category": "Technology"
+    "category": "Technology",
+    "articleDate": "2024-03-10"
   },
   {
     "id": 3,
@@ -21,7 +23,8 @@
     "content": "The machines are taking over...",
     "author": "Gary Chang",
     "published": true,
-    "category": "Technology"
+    "category": "Technology",
+    "articleDate": "2024-01-25"
   },
   {
     "id": 4,
@@ -29,7 +32,8 @@
     "content": "Cooking is an art form...",
     "author": "Asthon Brown",
     "published": true,
-    "category": "Food"
+    "category": "Food",
+    "articleDate": "2023-12-05"
   },
   {
     "id": 5,
@@ -37,7 +41,8 @@
     "content": "Baking is a fun and rewarding hobby...",
     "author": "Sara Lee",
     "published": true,
-    "category": "Food"
+    "category": "Food",
+    "articleDate": "2024-05-12"
   },
   {
     "id": 6,
@@ -45,7 +50,8 @@
     "content": "Python is a powerful programming language...",
     "author": "John Doe",
     "published": true,
-    "category": "Programming"
+    "category": "Programming",
+    "articleDate": "2024-04-18"
   },
   {
     "id": 7,
@@ -53,7 +59,8 @@
     "content": "Nature is a source of inspiration...",
     "author": "Jane Smith",
     "published": true,
-    "category": "Nature"
+    "category": "Nature",
+    "articleDate": "2024-06-22"
   },
   {
     "id": 8,
@@ -61,7 +68,8 @@
     "content": "Outdoor activities are good for the soul...",
     "author": "Math Hiker",
     "published": true,
-    "category": "Nature"
+    "category": "Nature",
+    "articleDate": "2024-02-01"
   },
   {
     "id": 9,
@@ -69,7 +77,8 @@
     "content": "Web development is an exciting field...",
     "author": "Gary Chang",
     "published": true,
-    "category": "Technology"
+    "category": "Technology",
+    "articleDate": "2024-07-04"
   },
   {
     "id": 10,
@@ -77,6 +86,7 @@
     "content": "Photography is a creative and rewarding hobby...",
     "author": "Asthon Brown",
     "published": true,
-    "category": "Art"
+    "category": "Art",
+    "articleDate": "2024-03-30"
   }
 ]

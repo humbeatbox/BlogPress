@@ -46,17 +46,17 @@ app.get("/about", (req, res) => {
   res.sendFile(path.join(__dirname, "/views/about.html"));
 });
 
-app.get("/articles", (req, res) => {
-  // console.log("!server!articles!");
-  contentService
-    .getAllArticles()
-    .then((data) => {
-      res.json(data); // Send the published articles as JSON response
-    })
-    .catch((err) => {
-      res.json({ message: err }); // Send the error message if something went wrong
-    });
-});
+// app.get("/articles", (req, res) => {
+//   // console.log("!server!articles!");
+//   contentService
+//     .getAllArticles()
+//     .then((data) => {
+//       res.json(data); // Send the published articles as JSON response
+//     })
+//     .catch((err) => {
+//       res.json({ message: err }); // Send the error message if something went wrong
+//     });
+// });
 
 app.get("/categories", (req, res) => {
   // console.log("!server!category!");
@@ -142,10 +142,9 @@ app.get("/articles", (req, res) => {
       .getArticlesByMinDate(req.query.minDate)
       .then((articles) => res.json(articles))
       .catch((err) => res.status(404).json({ message: err }));
-  }
-  //if no query string then return all articles
-  //it will like "/articles"
-  else {
+  } else {
+    //if no query string then return all articles
+    //it will like "/articles"
     contentService
       .getAllArticles()
       .then((articles) => res.json(articles))
