@@ -21,21 +21,6 @@ cloudinary.config({
 
 const upload = multer(); // No disk storage, files are stored in memory
 
-async function startServer() {
-  try {
-    await contentService.initialize();
-    console.log("Content service initialized");
-
-    app.listen(HTTP_PORT, () => {
-      console.log(`Express http server listening on ${HTTP_PORT}`);
-    });
-  } catch (err) {
-    console.error("Error initializing content service:", err);
-    process.exit(1);
-  }
-}
-
-startServer();
 //Create routes for / (Home), /about, /articles, and /categories.
 //redirect to the about page
 app.get("/", (req, res) => {
@@ -164,3 +149,19 @@ app.get("/articles/:id", (req, res) => {
 });
 
 //End of AS3 part4 step2
+
+async function startServer() {
+  try {
+    await contentService.initialize();
+    console.log("Content service initialized");
+
+    app.listen(HTTP_PORT, () => {
+      console.log(`Express http server listening on ${HTTP_PORT}`);
+    });
+  } catch (err) {
+    console.error("Error initializing content service:", err);
+    process.exit(1);
+  }
+}
+
+startServer();
