@@ -2,6 +2,7 @@ const express = require("express"); // "require" the Express module
 const app = express(); // obtain the "app" object
 const HTTP_PORT = 9527; // assign a port
 const path = require("path");
+app.set("views", path.join(__dirname, "views"));
 const ContentService = require("./content-service");
 const contentService = new ContentService();
 app.use(express.static("public")); //static files for "/css/main.css
