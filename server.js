@@ -57,8 +57,18 @@ app.get("/categories", (req, res) => {
 });
 //part 1, step 2
 app.get("/articles/add", (req, res) => {
-  // res.sendFile(path.join(__dirname, "views", "addArticle.html"));
-  res.render("addArticle");
+  contentService
+    .getCategories() //get the category
+    .then((categories) => {
+      //then pass the categories to the addArticle page for select the category
+      res.render("addArticle", { categories: categories });
+    })
+    .catch((err) => {
+      res.render("addArticle", {
+        categories: [],
+        message: "Error loading categories: " + err,
+      });
+    });
 });
 
 //part 2 step3 and we must need to add the comment to get the full mark
@@ -145,7 +155,7 @@ app.get("/articles", (req, res) => {
   //check if the query string contains the category parameter
   if (req.query.category) {
     contentService
-      .getArticlesByCategory(req.query.category)
+      .getArticlesByCategory(req.query.categoryId)
       .then((data) => {
         res.render("articles", { articles: data });
       })

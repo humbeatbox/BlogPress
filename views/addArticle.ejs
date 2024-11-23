@@ -89,11 +89,12 @@
         <div class="mb-3">
           <label for="category" class="form-label">Category</label>
           <select class="form-select" id="category" name="category" required>
-            <option value="Programming">Programming</option>
-            <option value="Technology">Technology</option>
-            <option value="Food">Food</option>
-            <option value="Nature">Nature</option>
-            <option value="Art">Art</option>
+            <!-- show the category  -->
+            <option value="">Select a category</option>
+            <% if (typeof categories !== 'undefined' && categories.length > 0) {
+            %> <% categories.forEach(category => { %>
+            <option value="<%= category.id %>"><%= category.name %></option>
+            <% }); %> <% } %>
           </select>
         </div>
         <div class="mb-3">
