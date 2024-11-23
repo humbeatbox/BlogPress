@@ -155,11 +155,13 @@ app.get("/articles", (req, res) => {
   //check if the query string contains the category parameter
   if (req.query.category) {
     contentService
-      .getArticlesByCategory(req.query.categoryId)
+      .getArticlesByCategory(req.query.category)
       .then((data) => {
+        console.log("Found articles:", data);
         res.render("articles", { articles: data });
       })
       .catch((err) => {
+        console.log("Error:", err);
         res.render("articles", { message: err });
       });
   }

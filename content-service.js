@@ -102,7 +102,7 @@ class ContentService {
   getArticlesByCategory = (category) => {
     return new Promise((resolve, reject) => {
       const filteredArticles = this.articles
-        .filter((article) => article.category === parseInt(categoryId))
+        .filter((article) => article.category === parseInt(category))
         //need to use the function to transfer the category id to category name
         .map((article) => this.addCategoryDetailsToArticle(article));
 
