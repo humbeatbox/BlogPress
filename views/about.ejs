@@ -12,7 +12,7 @@
     <title>About</title>
   </head>
   <body>
-    <header>
+    <!-- <header>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
           <a class="navbar-brand" href="/">My Blog</a>
@@ -51,7 +51,8 @@
           </div>
         </div>
       </nav>
-    </header>
+    </header> -->
+    <%- include('partials/nav', {active: 'about'}); %>
     <main class="container">
       <h1>About Me</h1>
       <h2>Hsiao-Kang Chang - 120049234</h2>
@@ -69,11 +70,7 @@
         suggestions or just to say hello!
       </p>
     </main>
-    <footer>
-      <p>Student Name: HSIAO-KANG CHANG</p>
-      <p>Student Number: 120049234</p>
-      <p><a href="hchang67@myseneca.ca">hchang67@myseneca.ca</a></p>
-    </footer>
+    <%- include('partials/footer'); %>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"

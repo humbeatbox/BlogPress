@@ -34,18 +34,27 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
+// app.get("/categories", (req, res) => {
+//   // console.log("!server!category!");
+//   contentService
+//     .getCategories()
+//     .then((data) => {
+//       res.json(data); // Send the published articles as JSON response
+//     })
+//     .catch((err) => {
+//       res.json({ message: err }); // Send the error message if something went wrong
+//     });
+// });
 app.get("/categories", (req, res) => {
-  // console.log("!server!category!");
   contentService
     .getCategories()
     .then((data) => {
-      res.json(data); // Send the published articles as JSON response
+      res.render("categories", { categories: data });
     })
     .catch((err) => {
-      res.json({ message: err }); // Send the error message if something went wrong
+      res.render("categories", { message: err });
     });
 });
-
 //part 1, step 2
 app.get("/articles/add", (req, res) => {
   // res.sendFile(path.join(__dirname, "views", "addArticle.html"));
