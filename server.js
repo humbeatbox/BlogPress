@@ -7,6 +7,8 @@ const contentService = new ContentService();
 app.use(express.static("public")); //static files for "/css/main.css
 require("dotenv").config();
 
+//AS4 setup ejs
+app.set("view engine", "ejs");
 //for Cloudinary
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
@@ -28,20 +30,9 @@ app.get("/", (req, res) => {
 });
 
 app.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/about.html"));
+  //res.sendFile(path.join(__dirname, "/views/about.html"));
+  res.render("about");
 });
-
-// app.get("/articles", (req, res) => {
-//   // console.log("!server!articles!");
-//   contentService
-//     .getAllArticles()
-//     .then((data) => {
-//       res.json(data); // Send the published articles as JSON response
-//     })
-//     .catch((err) => {
-//       res.json({ message: err }); // Send the error message if something went wrong
-//     });
-// });
 
 app.get("/categories", (req, res) => {
   // console.log("!server!category!");
@@ -57,7 +48,8 @@ app.get("/categories", (req, res) => {
 
 //part 1, step 2
 app.get("/articles/add", (req, res) => {
-  res.sendFile(path.join(__dirname, "views", "addArticle.html"));
+  // res.sendFile(path.join(__dirname, "views", "addArticle.html"));
+  res.render("addArticle");
 });
 
 //part 2 step3 and we must need to add the comment to get the full mark
@@ -111,32 +103,69 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
 });
 
 //AS3 part4 step1
+// app.get("/articles", (req, res) => {
+//   //check if the query string contains the category parameter
+//   //it will like "/articles?category=value"
+//   if (req.query.category) {
+//     contentService
+//       .getArticlesByCategory(req.query.category)
+//       .then((articles) => res.json(articles))
+//       .catch((err) => res.status(404).json({ message: err }));
+//   }
+//   //check if the query string contains the minDate parameter
+//   //it will like "/articles?minDate=value"
+//   else if (req.query.minDate) {
+//     contentService
+//       .getArticlesByMinDate(req.query.minDate)
+//       .then((articles) => res.json(articles))
+//       .catch((err) => res.status(404).json({ message: err }));
+//   } else {
+//     //if no query string then return all articles
+//     //it will like "/articles"
+//     contentService
+//       .getAllArticles()
+//       .then((articles) => res.json(articles))
+//       .catch((err) => res.status(404).json({ message: err }));
+//   }
+// });
+//End of AS3 part4 step1
+
+//AS4
+//chage the res.json to res.render
 app.get("/articles", (req, res) => {
   //check if the query string contains the category parameter
-  //it will like "/articles?category=value"
   if (req.query.category) {
     contentService
       .getArticlesByCategory(req.query.category)
-      .then((articles) => res.json(articles))
-      .catch((err) => res.status(404).json({ message: err }));
+      .then((data) => {
+        res.render("articles", { articles: data });
+      })
+      .catch((err) => {
+        res.render("articles", { message: err });
+      });
   }
   //check if the query string contains the minDate parameter
-  //it will like "/articles?minDate=value"
   else if (req.query.minDate) {
     contentService
       .getArticlesByMinDate(req.query.minDate)
-      .then((articles) => res.json(articles))
-      .catch((err) => res.status(404).json({ message: err }));
+      .then((data) => {
+        res.render("articles", { articles: data });
+      })
+      .catch((err) => {
+        res.render("articles", { message: err });
+      });
   } else {
     //if no query string then return all articles
-    //it will like "/articles"
     contentService
       .getAllArticles()
-      .then((articles) => res.json(articles))
-      .catch((err) => res.status(404).json({ message: err }));
+      .then((data) => {
+        res.render("articles", { articles: data });
+      })
+      .catch((err) => {
+        res.render("articles", { message: err });
+      });
   }
 });
-//End of AS3 part4 step1
 
 //AS3 part4 step2
 //for get the article by id
