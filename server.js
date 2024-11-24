@@ -35,28 +35,19 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
-// app.get("/categories", (req, res) => {
-//   // console.log("!server!category!");
-//   contentService
-//     .getCategories()
-//     .then((data) => {
-//       res.json(data); // Send the published articles as JSON response
-//     })
-//     .catch((err) => {
-//       res.json({ message: err }); // Send the error message if something went wrong
-//     });
-// });
 app.get("/categories", (req, res) => {
   contentService
     .getCategories()
-    .then((data) => {
-      res.render("categories", { categories: data });
+    .then((categories) => {
+      //render the categories page with the categories
+      res.render("categories", { categories: categories });
     })
     .catch((err) => {
+      //if error then show the error message
       res.render("categories", { message: err });
     });
 });
-//part 1, step 2
+
 app.get("/articles/add", (req, res) => {
   contentService
     .getCategories() //get the category
@@ -65,6 +56,7 @@ app.get("/articles/add", (req, res) => {
       res.render("addArticle", { categories: categories });
     })
     .catch((err) => {
+      //if error then show the error message
       res.render("addArticle", {
         categories: [],
         message: "Error loading categories: " + err,
@@ -72,7 +64,6 @@ app.get("/articles/add", (req, res) => {
     });
 });
 
-//part 2 step3 and we must need to add the comment to get the full mark
 //for post the article (provided by professor)
 //This route is handle the form submissions for adding new articles
 app.post("/articles/add", upload.single("featureImage"), (req, res) => {
@@ -110,8 +101,8 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
   //for process the article with the image url
   function processArticle(imageUrl) {
     req.body.featureImage = imageUrl;
-    console.log("req.body and in processArticle");
-    console.log(req.body);
+    // console.log("req.body and in processArticle");
+    // console.log(req.body);
     //call the addArticle function from contentService to handle the article
     contentService
       .addArticle(req.body)
@@ -122,47 +113,20 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
   }
 });
 
-//AS3 part4 step1
-// app.get("/articles", (req, res) => {
-//   //check if the query string contains the category parameter
-//   //it will like "/articles?category=value"
-//   if (req.query.category) {
-//     contentService
-//       .getArticlesByCategory(req.query.category)
-//       .then((articles) => res.json(articles))
-//       .catch((err) => res.status(404).json({ message: err }));
-//   }
-//   //check if the query string contains the minDate parameter
-//   //it will like "/articles?minDate=value"
-//   else if (req.query.minDate) {
-//     contentService
-//       .getArticlesByMinDate(req.query.minDate)
-//       .then((articles) => res.json(articles))
-//       .catch((err) => res.status(404).json({ message: err }));
-//   } else {
-//     //if no query string then return all articles
-//     //it will like "/articles"
-//     contentService
-//       .getAllArticles()
-//       .then((articles) => res.json(articles))
-//       .catch((err) => res.status(404).json({ message: err }));
-//   }
-// });
-//End of AS3 part4 step1
-
 //AS4
 //chage the res.json to res.render
 app.get("/articles", (req, res) => {
   //check if the query string contains the category parameter
+  //if the query string contains the category parameter
   if (req.query.category) {
     contentService
       .getArticlesByCategory(req.query.category)
       .then((data) => {
-        console.log("Found articles:", data);
+        //show all the articles with the category
         res.render("articles", { articles: data });
       })
       .catch((err) => {
-        console.log("Error:", err);
+        //if error then show the error message
         res.render("articles", { message: err });
       });
   }
@@ -171,9 +135,11 @@ app.get("/articles", (req, res) => {
     contentService
       .getArticlesByMinDate(req.query.minDate)
       .then((data) => {
+        //show all the articles with the minDate
         res.render("articles", { articles: data });
       })
       .catch((err) => {
+        //if error then show the error message
         res.render("articles", { message: err });
       });
   } else {
@@ -189,23 +155,30 @@ app.get("/articles", (req, res) => {
   }
 });
 
-//AS3 part4 step2
 //for get the article by id
 //it will like "/articles/:id"
-app.get("/articles/:id", (req, res) => {
+app.get("/article/:id", (req, res) => {
   contentService
-    .getArticleById(parseInt(req.params.id)) //neet to parse the id to integer
-    .then((article) => res.json(article))
-    .catch((err) => res.status(404).json({ message: err }));
+    .getArticleById(parseInt(req.params.id)) //new feature neet to parse the id to integer
+    .then((article) => {
+      //if success then show the article(pass the article to the article page as parameter)
+      res.render("article", { article: article });
+    })
+    .catch((err) => {
+      // res.status(404).render("article", { message: err });
+      res.status(404).render("errors/404", { title: "404 Not Found" });
+    });
 });
 
-//End of AS3 part4 step2
+//404 error route shopuld be the last route
+app.use((req, res) => {
+  res.status(404).render("errors/404", { title: "404 Not Found" });
+});
 
 async function startServer() {
   try {
     await contentService.initialize();
     console.log("Content service initialized");
-
     app.listen(HTTP_PORT, () => {
       console.log(`Express http server listening on ${HTTP_PORT}`);
     });
@@ -215,4 +188,5 @@ async function startServer() {
   }
 }
 
+// Start the server in the end after all the routes have been defined
 startServer();

@@ -29,11 +29,13 @@ class ContentService {
   getPublishedArticles() {
     return new Promise((resolve, reject) => {
       const publishedArticles = this.articles
+        //only get the published articles
         .filter((article) => article.published === true)
         //need to use the function to transfer the category id to category name
         .map((article) => this.addCategoryDetailsToArticle(article));
 
       if (publishedArticles.length > 0) {
+        //if have the published articles then return the articles
         resolve(publishedArticles);
       } else {
         reject("no results returned");
@@ -136,10 +138,15 @@ class ContentService {
     return new Promise((resolve, reject) => {
       const foundArticle = this.articles.find((article) => article.id === id);
       if (foundArticle) {
-        // resolve(foundArticle);
-        resolve(this.addCategoryDetailsToArticle(foundArticle));
+        //if exist
+        if (foundArticle.published) {
+          //if published
+          resolve(this.addCategoryDetailsToArticle(foundArticle));
+        } else {
+          reject("404"); //not published
+        }
       } else {
-        reject("no result returned");
+        reject("404"); //not exist
       }
     });
   };
