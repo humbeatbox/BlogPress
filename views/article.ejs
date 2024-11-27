@@ -9,16 +9,10 @@
     />
     <link href="/css/site.css" rel="stylesheet" />
     <title>Article Details</title>
-    <style>
-      .content-wrapper {
-        padding-bottom: 100px; /* for footer */
-      }
-    </style>
   </head>
   <body class="d-flex flex-column min-vh-100">
     <!-- nav bar -->
     <%- include('partials/nav', {active: 'articles'}); %>
-
     <div class="container mt-4 flex-grow-1 content-wrapper">
       <!-- for each article will show the content if error will shows error  -->
       <% if (typeof message !== 'undefined') { %>

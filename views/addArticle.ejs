@@ -9,51 +9,12 @@
       integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
       crossorigin="anonymous"
     />
+    <link href="/css/site.css" rel="stylesheet" />
     <title>About</title>
   </head>
-  <body>
-    <!-- <header>
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="/">My Blog</a>
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <a class="nav-link" href="/">Home</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/about"
-                  >About</a
-                >
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/articles">Articles</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/categories">Categories</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/articles/add">Add Article</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header> -->
+  <body class="d-flex flex-column min-vh-100">
     <%- include('partials/nav', {active: 'addArticle'}); %>
-    <main class="container">
+    <main class="container mt-4 flex-grow-1 content-wrapper">
       <h1>Add Article</h1>
       <form action="/articles/add" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
