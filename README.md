@@ -91,3 +91,31 @@ By submitting this as my assignment, I declare that this assignment is my own wo
 - Modified category storage to use IDs instead of names
 - Implemented category name lookup functionality
 - Added proper data relationship between articles and categories
+
+### Create table in Database
+
+- id is serial
+- name is unique
+
+```
+CREATE TABLE categories (
+id SERIAL PRIMARY KEY,
+name VARCHAR(255) NOT NULL UNIQUE
+);
+```
+
+- category is reference to category table
+- context is unknow and i found that we can use TEXT
+
+```
+CREATE TABLE articles (
+id SERIAL PRIMARY KEY,
+title VARCHAR(255) NOT NULL,
+content TEXT NOT NULL,
+author VARCHAR(255) NOT NULL,
+category INTEGER NOT NULL REFERENCES categories(id),
+featureImage VARCHAR(500),
+published BOOLEAN DEFAULT false,
+articleDate DATE DEFAULT CURRENT_DATE
+);
+```
