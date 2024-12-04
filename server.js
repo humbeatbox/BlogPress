@@ -2,18 +2,15 @@ const express = require("express"); // "require" the Express module
 const app = express(); // obtain the "app" object
 const HTTP_PORT = 9527; // assign a port
 const path = require("path");
-app.set("views", path.join(__dirname, "views"));
-const ContentService = require("./content-service");
-const contentService = new ContentService();
-app.use(express.static("public")); //static files for "/css/main.css
-require("dotenv").config();
-
-//AS4 setup ejs
-app.set("view engine", "ejs");
 //for Cloudinary
 const multer = require("multer");
+const upload = multer(); // No disk storage, files are stored in memory
 const cloudinary = require("cloudinary").v2;
 const streamifier = require("streamifier");
+require("dotenv").config();
+//Import ContentService
+const ContentService = require("./content-service");
+const contentService = new ContentService();
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,7 +19,15 @@ cloudinary.config({
   secure: true,
 });
 
-const upload = multer(); // No disk storage, files are stored in memory
+//niddleware part
+app.use(express.static("public")); //static files for "/css/main.css
+app.set("views", path.join(__dirname, "views"));
+//need this for parsing the form parameter data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+//AS4 setup ejs
+app.set("view engine", "ejs");
 
 //Create routes for / (Home), /about, /articles, and /categories.
 //redirect to the about page
@@ -67,6 +72,20 @@ app.get("/articles/add", (req, res) => {
 //for post the article (provided by professor)
 //This route is handle the form submissions for adding new articles
 app.post("/articles/add", upload.single("featureImage"), (req, res) => {
+  //move to the top before use it
+  //for process the article with the image url
+  function processArticle(imageUrl) {
+    req.body.featureImage = imageUrl;
+    // console.log("req.body and in processArticle");
+    // console.log(req.body);
+    //call the addArticle function from contentService to handle the article
+    contentService
+      .addArticle(req.body)
+      .then(() => res.redirect("/articles"))
+      .catch((err) =>
+        res.status(500).json({ message: "Article creation failed", error: err })
+      );
+  }
   //have the file then upload to cloudinary
   if (req.file) {
     let streamUpload = (req) => {
