@@ -80,6 +80,8 @@ class ContentService {
   }
 
   //get all articles by category
+  //porvide by professor
+  //modify fomr Gary
   async getArticlesByCategory(category) {
     try {
       //query all articles by category(first parameter)
@@ -173,7 +175,7 @@ class ContentService {
       if (result.rows.length === 0) {
         throw new Error("404");
       }
-
+      console.log("In get by ID", article);
       return await this.addCategoryDetailsToArticle(article);
     } catch (err) {
       throw new Error(err.message);
@@ -199,6 +201,7 @@ class ContentService {
     try {
       //use the await function to get the category name by the category id
       const categoryName = await this.getCategoryById(article.category);
+      //console.log(article);
       return {
         ...article, //copy the article object
         //only transfer the category id to category name

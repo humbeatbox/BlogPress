@@ -117,19 +117,6 @@ app.post("/articles/add", upload.single("featureImage"), (req, res) => {
     processArticle("");
     console.log("no uploaded file");
   }
-  //for process the article with the image url
-  function processArticle(imageUrl) {
-    req.body.featureImage = imageUrl;
-    // console.log("req.body and in processArticle");
-    // console.log(req.body);
-    //call the addArticle function from contentService to handle the article
-    contentService
-      .addArticle(req.body)
-      .then(() => res.redirect("/articles"))
-      .catch((err) =>
-        res.status(500).json({ message: "Article creation failed", error: err })
-      );
-  }
 });
 
 //AS4
@@ -180,7 +167,13 @@ app.get("/article/:id", (req, res) => {
   contentService
     .getArticleById(parseInt(req.params.id)) //new feature neet to parse the id to integer
     .then((article) => {
+      console.log("Article data:", {
+        id: article.id,
+        title: article.title,
+        featureimage: article.featureimage,
+      });
       //if success then show the article(pass the article to the article page as parameter)
+      // console.log("Here is in get article by ID route", article);
       res.render("article", { article: article });
     })
     .catch((err) => {
