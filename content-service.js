@@ -1,170 +1,216 @@
-// const fs = require("fs"); // required at the top of your module
-const fs = require("fs").promises;
-const path = require("path");
+require("dotenv").config();
+const { Pool } = require("pg");
+
+const pool = new Pool({
+  user: process.env.PG_USER_NAME,
+  host: process.env.PG_SQL_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_SQL_PORT,
+  ssl: { rejectUnauthorized: false },
+});
 
 class ContentService {
-  constructor() {
-    this.articles = [];
-    this.categories = [];
-  }
-  initialize() {
-    const articlesPath = path.join(__dirname, "data", "articles.json");
-    const categoriesPath = path.join(__dirname, "data", "categories.json");
+  constructor() {}
 
-    return new Promise((resolve, reject) => {
-      fs.readFile(articlesPath, "utf8")
-        .then((data) => {
-          this.articles = JSON.parse(data);
-          return fs.readFile(categoriesPath, "utf8");
-        })
-        .then((data) => {
-          this.categories = JSON.parse(data);
-          resolve();
-        })
-        .catch((err) => {
-          reject("Unable to read files: " + err);
-        });
-    });
+  //init database connection
+  async initialize() {
+    try {
+      //use pool.query to connect to the database
+      await pool.query("SELECT NOW()");
+      console.log("Database connected successfully - content server");
+    } catch (err) {
+      throw new Error("Unable to connect to database: " + err);
+    }
   }
-  getPublishedArticles() {
-    return new Promise((resolve, reject) => {
-      const publishedArticles = this.articles
-        //only get the published articles
-        .filter((article) => article.published === true)
-        //need to use the function to transfer the category id to category name
-        .map((article) => this.addCategoryDetailsToArticle(article));
 
-      if (publishedArticles.length > 0) {
-        //if have the published articles then return the articles
-        resolve(publishedArticles);
-      } else {
-        reject("no results returned");
+  //get all published article
+  async getPublishedArticles() {
+    try {
+      //sql query the article only published
+      const result = await pool.query(
+        "SELECT * FROM articles WHERE published = true"
+      );
+      //if no result
+      if (result.rows.length === 0) {
+        throw new Error("no results returned");
       }
-    });
+      //because we use the async function so we need to use the await to wait for the result
+      //and use the Promise.all to wait for all(query and addCate....) the result
+      return await Promise.all(
+        //use the map to create new array to the category id to category name
+        result.rows.map((article) => this.addCategoryDetailsToArticle(article))
+      );
+    } catch (err) {
+      throw new Error("Error from getting published articles: " + err.message);
+    }
   }
-  //get all articles
-  getAllArticles() {
-    return new Promise((resolve, reject) => {
-      if (this.articles.length > 0) {
-        //need to use the function to transfer the category id to category name
-        const articlesWithCategories = this.articles.map((article) =>
-          this.addCategoryDetailsToArticle(article)
-        );
-        resolve(articlesWithCategories);
-      } else {
-        reject("no results returned");
+
+  //get all articles with no filter
+  async getAllArticles() {
+    try {
+      //query all articles
+      const result = await pool.query("SELECT * FROM articles");
+      // console.log(result);
+      if (result.rows.length === 0) {
+        throw new Error("no results returned");
       }
-    });
+      //use the map to chage the category id to category name
+      return await Promise.all(
+        result.rows.map((article) => this.addCategoryDetailsToArticle(article))
+      );
+    } catch (err) {
+      throw new Error("Error from getting all articles: " + err.message);
+    }
   }
 
   //get all categories
-  getCategories() {
-    return new Promise((resolve, reject) => {
-      if (this.categories.length > 0) {
-        resolve(this.categories);
-      } else {
-        reject("no results returned");
+  async getCategories() {
+    try {
+      //query all categories
+      const result = await pool.query("SELECT * FROM categories");
+      //if no result
+      if (result.rows.length === 0) {
+        throw new Error("no results returned");
       }
-    });
+      return result.rows;
+    } catch (err) {
+      throw new Error("Error getting categories: " + err.message);
+    }
   }
 
-  //AS3 part3 step1
-  addArticle(article) {
-    return new Promise((resolve, reject) => {
-      try {
-        const newArticle = {
-          id: this.articles.length + 1,
-          title: article.title,
-          content: article.content,
-          author: article.author,
-          category: parseInt(article.category), //save in int(ID)
-          featureImage: article.featureImage || "",
-          published: article.published ? true : false,
-          articleDate:
-            article.articleDate || new Date().toISOString().split("T")[0],
-          //get the date and use the T to split the date and time and get the date only
-        };
-        if (!this.categories.find((data) => data.id === newArticle.category)) {
-          reject("Invalid category ID");
-          return;
-        }
+  //get all articles by category
+  async getArticlesByCategory(category) {
+    try {
+      //query all articles by category(first parameter)
+      const result = await pool.query(
+        "SELECT * FROM articles WHERE category = $1",
+        [parseInt(category)]
+      );
 
-        this.articles.push(newArticle);
-        resolve(newArticle);
-      } catch (error) {
-        console.error("Error in addArticle:", error);
-        reject(error);
+      if (result.rows.length === 0) {
+        throw new Error("no results returned");
       }
-    });
+
+      return await Promise.all(
+        result.rows.map((article) => this.addCategoryDetailsToArticle(article))
+      );
+    } catch (err) {
+      throw new Error("Error getting articles by category: " + err.message);
+    }
   }
-  //end of AS3 part3 step1
 
-  //AS3 part3 step3
-  //forvide by professor
-  getArticlesByCategory = (category) => {
-    return new Promise((resolve, reject) => {
-      const filteredArticles = this.articles
-        .filter((article) => article.category === parseInt(category))
-        //need to use the function to transfer the category id to category name
-        .map((article) => this.addCategoryDetailsToArticle(article));
+  // get articles by time
+  async getArticlesByMinDate(minDateStr) {
+    try {
+      const result = await pool.query(
+        "SELECT * FROM articles WHERE articleDate >= $1",
+        [minDateStr]
+      );
 
-      if (filteredArticles.length > 0) {
-        resolve(filteredArticles);
-      } else {
-        reject("no results returned");
+      if (result.rows.length === 0) {
+        throw new Error("no results returned");
       }
-    });
-  };
 
-  getArticlesByMinDate = (minDateStr) => {
-    return new Promise((resolve, reject) => {
-      const minDate = new Date(minDateStr);
-      // const filteredArticles = this.articles.filter(
-      //   (article) => new Date(article.articleDate) >= minDate
-      // );
-      const filteredArticles = this.articles
-        .filter((article) => new Date(article.articleDate) >= minDate)
-        .map((article) => this.addCategoryDetailsToArticle(article));
+      return await Promise.all(
+        result.rows.map((article) => this.addCategoryDetailsToArticle(article))
+      );
+    } catch (err) {
+      throw new Error("Error getting articles by date: " + err.message);
+    }
+  }
+  async addArticle(articleData) {
+    //because my addArticle page is just sort by this sequence
+    //so I just use the sequence to insert the data
+    //need to be change later
+    const query = `
+      INSERT INTO articles (title, content, author, category, featureImage, published, articleDate)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING *
+      `;
+    //use returning can get a result back without using anyother query to find the data
 
-      if (filteredArticles.length > 0) {
-        resolve(filteredArticles);
-      } else {
-        reject("no results returned");
+    try {
+      //run that query
+      //first parameter is the query script
+      //second parameter is the data that need to be insert pass to the query
+      const result = await pool.query(query, [
+        articleData.title,
+        articleData.content,
+        articleData.author,
+        parseInt(articleData.category),
+        articleData.featureImage || "",
+        articleData.published ? true : false,
+        articleData.articleDate || new Date().toISOString().split("T")[0],
+      ]);
+
+      //if insert fail
+      if (result.rows.length === 0) {
+        throw new Error("Error adding article");
       }
-    });
-  };
+      //we don't need to save the category name in the database
+      //so just return the article
+      // return await this.addCategoryDetailsToArticle(result.rows[0]);
+      return result.rows[0];
+    } catch (err) {
+      throw new Error("Error adding article: " + err.message);
+    }
+  }
+  //get article by id
+  async getArticleById(id) {
+    try {
+      const result = await pool.query("SELECT * FROM articles WHERE id = $1", [
+        parseInt(id),
+      ]);
 
-  getArticleById = (id) => {
-    return new Promise((resolve, reject) => {
-      const foundArticle = this.articles.find((article) => article.id === id);
-      if (foundArticle) {
-        //if exist
-        if (foundArticle.published) {
-          //if published
-          resolve(this.addCategoryDetailsToArticle(foundArticle));
-        } else {
-          reject("404"); //not published
-        }
-      } else {
-        reject("404"); //not exist
+      //not published
+      const article = result.rows[0];
+      if (!article.published) {
+        throw new Error("404");
       }
-    });
-  };
-  //End of AS3 part3 step3
 
-  //for get a category name by id
-  getCategoryById(categoryId) {
-    const category = this.categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : "Unknown Category";
+      //if not exist
+      if (result.rows.length === 0) {
+        throw new Error("404");
+      }
+
+      return await this.addCategoryDetailsToArticle(article);
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  }
+
+  //for get a article name by id
+  async getCategoryById(categoryId) {
+    try {
+      const result = await pool.query(
+        "SELECT name FROM categories WHERE id = $1",
+        [categoryId]
+      );
+      return result.rows.length > 0 ? result.rows[0].name : "Unknown Category";
+    } catch (error) {
+      console.error("Error in getCategoryById:", error);
+      return "Unknown Category";
+    }
   }
 
   //transfer the category id to category name
-  addCategoryDetailsToArticle(article) {
-    return {
-      ...article, //copy the article object
-      //only transfer the category id to category name
-      categoryName: this.getCategoryById(article.category),
-    };
+  async addCategoryDetailsToArticle(article) {
+    try {
+      //use the await function to get the category name by the category id
+      const categoryName = await this.getCategoryById(article.category);
+      return {
+        ...article, //copy the article object
+        //only transfer the category id to category name
+        categoryName,
+      };
+    } catch (error) {
+      console.error("Error in addCategoryDetailsToArticle:", error);
+      return {
+        ...article,
+        categoryName: "Unknown Category",
+      };
+    }
   }
 }
 
