@@ -92,12 +92,19 @@ By submitting this as my assignment, I declare that this assignment is my own wo
 - Implemented category name lookup functionality
 - Added proper data relationship between articles and categories
 
-### Create table in Database
+## Assignment 4 to Assignment 5 Updates
+
+### Database Migration
+
+- Migrated from JSON file-based storage to PostgreSQL database hosted on Neon.tech
+- Created two main tables: `categories` and `articles`
+
+### Create two table
 
 - id is serial
 - name is unique
 
-```
+```sql
 CREATE TABLE categories (
 id SERIAL PRIMARY KEY,
 name VARCHAR(255) NOT NULL UNIQUE
@@ -107,7 +114,7 @@ name VARCHAR(255) NOT NULL UNIQUE
 - category is reference to category table
 - context is unknow and i found that we can use TEXT
 
-```
+```sql
 CREATE TABLE articles (
 id SERIAL PRIMARY KEY,
 title VARCHAR(255) NOT NULL,
@@ -119,3 +126,32 @@ published BOOLEAN DEFAULT false,
 articleDate DATE DEFAULT CURRENT_DATE
 );
 ```
+
+### Content Service Updates (content-service.js)
+
+- Key changes include:
+  - Implemented proper SQL transactions
+  - Added parameterized queries for security
+  - Updated return types to match database structure
+  - Added new methods for article management (update/delete)
+
+### Server Updates (server.js)
+
+- Added new routes for article management(by management key)
+- Added support for:
+  - PUT /articles/:id for updating articles
+  - DELETE /articles/:id for removing articles
+
+### Navigation Updates
+
+- Added new "Manage Articles" link in navigation(For test edit and delete route)
+- Enhanced routing logic to handle management views
+
+### New Features
+
+#### Article Management Interface
+
+New Views Added:
+
+- manageArticle.ejs: Form for editing individual articles
+- manageArticles.ejs: List view of all articles with management controls
