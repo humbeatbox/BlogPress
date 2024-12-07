@@ -50,7 +50,7 @@ class ContentService {
   async getAllArticles() {
     try {
       //query all articles
-      const result = await pool.query("SELECT * FROM articles");
+      const result = await pool.query("SELECT * FROM articles ORDER BY id ASC");
       // console.log(result);
       if (result.rows.length === 0) {
         throw new Error("no results returned");
@@ -159,7 +159,7 @@ class ContentService {
     }
   }
   //get article by id
-  async getArticleById(id) {
+  async getArticleById(id, isManageMode = false) {
     try {
       const result = await pool.query("SELECT * FROM articles WHERE id = $1", [
         parseInt(id),
@@ -172,10 +172,10 @@ class ContentService {
       }
 
       //if not exist
-      if (result.rows.length === 0) {
+      if (!isManageMode && !article.published) {
         throw new Error("404");
       }
-      console.log("In get by ID", article);
+      // console.log("In get by ID", article);
       return await this.addCategoryDetailsToArticle(article);
     } catch (err) {
       throw new Error(err.message);
@@ -214,6 +214,57 @@ class ContentService {
         categoryName: "Unknown Category",
       };
     }
+  }
+
+  //for AS5 part 3
+  updateArticle(id, articleData) {
+    const query = `
+    UPDATE articles 
+    SET title = $1, 
+        content = $2, 
+        author = $3, 
+        category = $4, 
+        featureImage = $5, 
+        published = $6, 
+        articleDate = $7
+    WHERE id = $8
+    RETURNING *`;
+
+    return pool
+      .query(query, [
+        articleData.title,
+        articleData.content,
+        articleData.author,
+        parseInt(articleData.category),
+        articleData.featureImage || "",
+        articleData.published ? true : false,
+        articleData.articleDate || new Date().toISOString().split("T")[0],
+        parseInt(id),
+      ])
+      .then((result) => {
+        if (result.rows.length > 0) {
+          return this.addCategoryDetailsToArticle(result.rows[0]);
+        }
+        return Promise.reject("Article not found");
+      })
+      .catch((err) => Promise.reject("Error updating article: " + err));
+  }
+
+  //for delete article
+  deleteArticle(id) {
+    return (
+      pool
+        //delete the article by id
+        .query("DELETE FROM articles WHERE id = $1 RETURNING *", [parseInt(id)])
+        .then((result) => {
+          //if the result is found it will return the result
+          if (result.rows.length > 0) {
+            return result.rows[0];
+          }
+          return Promise.reject("Article not found");
+        })
+        .catch((err) => Promise.reject("Error deleting article: " + err))
+    );
   }
 }
 
